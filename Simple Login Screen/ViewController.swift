@@ -14,6 +14,46 @@ class ViewController: UIViewController {
     @IBOutlet weak var label     : UILabel!
     
     
+    //Login button
+    @IBAction func loginButton(_ sender: Any) {
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        
+        let context = appDelegate.persistentContainer.viewContext
+        
+        let newValue = NSEntityDescription.insertNewObject(forEntityName: "UsersDatabase", into: context)
+        
+        newValue.setValue(textField.text, forKey: "username")
+        
+        
+        
+        
+        
+        //Do try catch construction block for saving user input to coredata model
+        do{
+            try context.save()
+            
+            textField.alpha = 0
+            
+            label.alpha = 1
+            
+            label.text = "Successfully " + textField.text! + "!"
+            
+        }catch{
+            
+            print("Failed to save")
+            
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,12 +72,31 @@ class ViewController: UIViewController {
         
         
         
-    }
-    
-    
-    //Login button action
-    @IBAction func loginButton(_ sender: UIButton) {
+        
+        
+        //Do try catch construction blockvfor fetching username from core database
+        do{
+            
+            let results = try context.fetch(request)
+            
+            for result in results as! [NSManagedObject] {
+                
+                if let username = result.value(forKey: "username") as? String {
+                    
+                    textField.alpha = 0
+                    
+                    label.alpha = 1
+                    
+                    label.text = "Login Successfully " + username + "!"
+            }
+        }
+            
+        }catch{
+            
+            print("Request failed")
+            
+        }
         
     }
-}
 
+}
